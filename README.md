@@ -5,9 +5,10 @@ PreparingTheKanji is an app that makes adding custom stories to [this RTK 6th Ed
 ## Usage
 
 1. Make sure you installed the AnkiConnect plugin in Anki.
-2. Start PreparingTheKanji with the command `npm start FullDeckName`  
+2. Install the dependencies with the command `npm i`.
+3. Start PreparingTheKanji with the command `npm start FullDeckName`.  
 **Example:** `npm start "Japanese::Kanji::RTK"`
-3. You can now start adding stories at http://localhost:3000.
+4. You can now start adding stories at http://localhost:3000.
 
 ## Note
 
