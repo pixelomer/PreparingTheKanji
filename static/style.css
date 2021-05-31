@@ -1,0 +1,66 @@
+@font-face { font-family: StrokeOrder; src: url('/StrokeOrder.ttf'); } 
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	overflow: hidden;
+}
+
+main {
+	left: 12.5%;
+	right: 12.5%;
+	height: 100%;
+	position: absolute;
+}
+
+#info {
+	margin-top: 15px;
+	float: left;
+	height: 100%;
+}
+
+.kanji {
+	font-size: 100px;
+	line-height: 130px;
+}
+
+.kanji:hover {
+	font-family: StrokeOrder;
+}
+
+#keyword {
+	text-align: center;
+	display: inline-block;
+	width: 100px;
+}
+
+#stories {
+	padding-left: 15px;
+	height: 100%;
+	overflow-y: scroll;
+	margin-bottom: 20px;
+}
+
+#prev {
+	float: left;
+}
+
+a {
+	text-decoration: none !important;
+}
+
+#info > a {
+	font-size: 20px;
+}
+
+#next {
+	float: right;
+}
+
+textarea {
+	width: 80%;
+}
+
+.disabled {
+	font-size: 20px;
+	color: gray;
+}
