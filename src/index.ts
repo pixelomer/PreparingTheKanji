@@ -14,12 +14,14 @@ interface CardInfo {
 	note: number;
 }
 
-async function performAction(action: string, data: object = {}): Promise<any> {
-	const body = {
+async function performAction(action: string, data?): Promise<any> {
+	const body: { action: string, version: number, params? } = {
 		action: action,
-		version: 6,
-		params: data
+		version: 6
 	};
+	if (data != null) {
+		body.params = data;
+	}
 	const response = await fetch("http://localhost:8765", {
 		method: "POST",
 		body: JSON.stringify(body)
@@ -35,7 +37,6 @@ async function getCardInfo(cardID: number): Promise<CardInfo> {
 	const [cardInfo] = await performAction("cardsInfo", {
 		cards: [cardID]
 	});
-	console.log(cardInfo);
 	return cardInfo;
 }
 
@@ -91,13 +92,23 @@ async function main() {
 	}
 
 	const deckName = process.argv[2];
-	const allCards: Array<number> = await performAction("findCards", {
-		query: `"deck:${deckName}"`
-	});
+	let allCards: Array<number> = null;
 
 	const app = express();
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.static('static'));
+
+	app.use(async(request, response, next) => {
+		try {
+			allCards = await performAction("findCards", {
+				query: `"deck:${deckName}"`
+			});
+			next();
+		}
+		catch (error) {
+			response.status(500).type('text/plain').send(`Failed to communicate with AnkiConnect.\n\n${error}`);
+		}
+	});
 
 	app.get('/', async(request, response) => {
 		const newEmptyCards = await performAction("findCards", {
@@ -133,6 +144,15 @@ async function main() {
 			response.status(404).send("Card not found");
 			return;
 		}
+
+		let cardInfo = await getCardInfo(allCards[index]);
+
+		if (request.method === "POST") {
+			if (cardInfo.fields.Kanji.value !== request.body["kanji"]) {
+				response.status(400).type('text/plain').send("Kanji mismatch. Go back, refresh and try again.");
+				return;
+			}
+		}
 		
 		let prevCard: CardInfo = null;
 		let prevLink = `<span id="prev" class="disabled">&lt;</span>`;
@@ -140,8 +160,6 @@ async function main() {
 			prevCard = await getCardInfo(allCards[index-1]);
 			prevLink = `<a id="prev" href="/card/${index}">&lt;${prevCard.fields.Kanji.value}</a>`;
 		}
-
-		let cardInfo = await getCardInfo(allCards[index]);
 
 		let nextCard: CardInfo = null;
 		let nextLink = `<span id="next" class="disabled">&gt;</span>`;
@@ -213,6 +231,7 @@ async function main() {
 		</div>
 		<div id="stories">
 			<form method="post">
+				<input type="hidden" id="verify" name="kanji" value="${cardInfo.fields.Kanji.value}" />
 				${heisigHTML}
 				<h2>Koohii Stories</h2>
 				${koohiiHTML}
