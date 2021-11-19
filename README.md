@@ -2,6 +2,8 @@
 
 PreparingTheKanji is an app that makes adding custom stories to [this RTK 6th Edition deck](https://ankiweb.net/shared/info/1654787298) easier.
 
+![Screenshot](screenshot.png)
+
 ## Usage
 
 1. Make sure you installed the AnkiConnect plugin in Anki.
